@@ -1,5 +1,6 @@
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +9,215 @@
 <body>
 
     <h1>Loan Simulator</h1>
+
+    <h2>Loan Information</h2>
+
+    <form id="loanForm">
+
+        <label for="amount">Loan Amount:</label>
+        <input type="number" id="amount" min="0.01" step="0.01"
+               placeholder="Enter loan amount" required>
+
+        <br><br>
+
+        <label for="interestRate">Interest Rate (%):</label>
+        <input type="number" id="interestRate" min="0" step="0.01"
+               placeholder="Enter interest rate" required>
+
+        <br><br>
+
+        <label for="rateType">Interest Rate Type:</label>
+        <select id="rateType" required>
+            <option value="monthly">Effective Monthly (E.M.)</option>
+            <option value="annual">Effective Annual (E.A.)</option>
+        </select>
+
+        <br><br>
+
+        <label for="months">Loan Term (Months):</label>
+        <input type="number" id="months" min="1" step="1"
+               placeholder="Enter number of months" required>
+
+        <br><br>
+
+        <button type="submit">Calculate Loan</button>
+
+    </form>
+
+    <h2>Loan Results</h2>
+
+    <p id="monthlyRate"></p>
+    <p id="monthlyPayment"></p>
+    <p id="totalPayment"></p>
+    <p id="totalInterest"></p>
+
+    <h2>Amortization Schedule</h2>
+
+    <table border="1">
+
+        <thead>
+            <tr>
+                <th>Month</th>
+                <th>Initial Balance</th>
+                <th>Monthly Payment</th>
+                <th>Interest</th>
+                <th>Principal</th>
+                <th>Remaining Balance</th>
+            </tr>
+        </thead>
+
+        <tbody id="amortizationTable">
+        </tbody>
+
+    </table>
+
+    <script>
+
+        const loanForm = document.getElementById("loanForm");
+
+        loanForm.addEventListener("submit", function(event) {
+
+            event.preventDefault();
+
+            // 1. Get user inputs
+
+            const amount = parseFloat(document.getElementById("amount").value);
+
+            const interestRate = parseFloat(
+                document.getElementById("interestRate").value
+            );
+
+            const rateType = document.getElementById("rateType").value;
+
+            const months = parseInt(
+                document.getElementById("months").value
+            );
+
+            // 2. Validate inputs
+
+            if (
+                !Number.isFinite(amount) ||
+                !Number.isFinite(interestRate) ||
+                !Number.isInteger(months) ||
+                amount <= 0 ||
+                interestRate < 0 ||
+                months <= 0
+            ) {
+                alert("Please enter valid loan information.");
+                return;
+            }
+
+            // 3. Convert interest rate into monthly effective rate
+
+            let monthlyInterestRate;
+
+            if (rateType === "monthly") {
+
+                monthlyInterestRate = interestRate / 100;
+
+            } else {
+
+                monthlyInterestRate =
+                    Math.pow(1 + interestRate / 100, 1 / 12) - 1;
+
+            }
+
+            // 4. Calculate monthly payment
+
+            let monthlyPayment;
+
+            if (monthlyInterestRate === 0) {
+
+                monthlyPayment = amount / months;
+
+            } else {
+
+                monthlyPayment =
+                    amount *
+                    monthlyInterestRate /
+                    (1 - Math.pow(
+                        1 + monthlyInterestRate,
+                        -months
+                    ));
+
+            }
+
+            // 5. Initialize amortization variables
+
+            let remainingBalance = amount;
+
+            let totalInterest = 0;
+            let totalPayment = 0;
+
+            const table = document.getElementById("amortizationTable");
+
+            table.innerHTML = "";
+
+            // 6. Generate amortization schedule
+
+            for (let month = 1; month <= months; month++) {
+
+                const initialBalance = remainingBalance;
+
+                const interest =
+                    initialBalance * monthlyInterestRate;
+
+                let payment = monthlyPayment;
+
+                let principal = payment - interest;
+
+                // Adjust final payment to eliminate rounding differences
+
+                if (month === months) {
+
+                    principal = initialBalance;
+                    payment = principal + interest;
+
+                }
+
+                remainingBalance = Math.max(
+                    0,
+                    initialBalance - principal
+                );
+
+                totalInterest += interest;
+                totalPayment += payment;
+
+                // 7. Create table row
+
+                const row = document.createElement("tr");
+
+                row.innerHTML = `
+                    <td>${month}</td>
+                    <td>${initialBalance.toFixed(2)}</td>
+                    <td>${payment.toFixed(2)}</td>
+                    <td>${interest.toFixed(2)}</td>
+                    <td>${principal.toFixed(2)}</td>
+                    <td>${remainingBalance.toFixed(2)}</td>
+                `;
+
+                table.appendChild(row);
+
+            }
+
+            // 8. Display loan results
+
+            document.getElementById("monthlyRate").textContent =
+                "Monthly Effective Rate: " +
+                (monthlyInterestRate * 100).toFixed(4) + "%";
+
+            document.getElementById("monthlyPayment").textContent =
+                "Monthly Payment: " + monthlyPayment.toFixed(2);
+
+            document.getElementById("totalPayment").textContent =
+                "Total Payment: " + totalPayment.toFixed(2);
+
+            document.getElementById("totalInterest").textContent =
+                "Total Interest: " + totalInterest.toFixed(2);
+
+        });
+
+    </script>
 
 </body>
 </html>
