@@ -1,223 +1,691 @@
 
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Loan Simulator</title>
+
+    <style>
+        /* GENERAL */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+            background: #F3F6FA;
+            color: #26364A;
+            padding: 35px 20px;
+        }
+
+        .container {
+            max-width: 1150px;
+            margin: auto;
+        }
+
+        /* HEADER */
+        header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 35px;
+        }
+
+        .logo {
+            background: #142B45;
+            color: #18B6A4;
+            width: 48px;
+            height: 48px;
+            border-radius: 13px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 25px;
+        }
+
+        header h1 {
+            font-size: 25px;
+            color: #142B45;
+            font-weight: 750;
+        }
+
+        header p {
+            color: #8391A3;
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        /* SECTION HEADINGS */
+        .section-heading {
+            margin-bottom: 20px;
+        }
+
+        .section-heading h2 {
+            font-size: 21px;
+            color: #142B45;
+            margin-bottom: 6px;
+        }
+
+        .section-heading p {
+            color: #8491A2;
+            font-size: 14px;
+        }
+
+        /* MAIN LAYOUT */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 22px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: #FFFFFF;
+            border: 1px solid #E7EDF4;
+            border-radius: 16px;
+            padding: 27px;
+            box-shadow: 0 4px 15px rgba(20, 43, 69, 0.035);
+        }
+
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            margin-bottom: 25px;
+        }
+
+        .card-icon {
+            background: #E8F8F5;
+            color: #18B6A4;
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 19px;
+        }
+
+        .card-title h3 {
+            font-size: 17px;
+            color: #142B45;
+        }
+
+        /* FORM */
+        .form-group {
+            margin-bottom: 19px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 650;
+            margin-bottom: 9px;
+            color: #34465A;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 13px 14px;
+            border: 1px solid #DDE5EE;
+            border-radius: 9px;
+            background: #FFFFFF;
+            color: #26364A;
+            font-size: 14px;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        input:focus, select:focus {
+            border-color: #18B6A4;
+            box-shadow: 0 0 0 3px rgba(24, 182, 164, 0.12);
+        }
+
+        input::placeholder {
+            color: #AAB5C2;
+        }
+
+        .calculate-btn {
+            width: 100%;
+            border: none;
+            padding: 15px;
+            background: #18B6A4;
+            color: white;
+            border-radius: 9px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 5px;
+        }
+
+        .calculate-btn:hover {
+            background: #119D8D;
+            transform: translateY(-1px);
+        }
+
+        /* RESULTS */
+        .result-primary {
+            background: #142B45;
+            color: white;
+            border-radius: 13px;
+            padding: 23px;
+            margin-bottom: 17px;
+        }
+
+        .result-primary p {
+            color: #B7C8D8;
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+
+        .result-primary h2 {
+            font-size: 32px;
+            color: #FFFFFF;
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 13px;
+        }
+
+        .result-box {
+            background: #F5F8FB;
+            padding: 18px;
+            border-radius: 11px;
+            border: 1px solid #EDF1F5;
+        }
+
+        .result-box p {
+            font-size: 12px;
+            color: #8391A3;
+            margin-bottom: 9px;
+        }
+
+        .result-box h3 {
+            color: #142B45;
+            font-size: 17px;
+            overflow-wrap: anywhere;
+        }
+
+        .result-box small {
+            color: #18A38F;
+            font-size: 11px;
+        }
+
+        .empty-results {
+            height: 245px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: #A0ADBB;
+            gap: 12px;
+        }
+
+        .empty-results span {
+            font-size: 40px;
+        }
+
+        .empty-results p {
+            font-size: 13px;
+            max-width: 230px;
+            line-height: 1.6;
+        }
+
+        /* AMORTIZATION */
+        .table-card {
+            background: #FFFFFF;
+            border: 1px solid #E7EDF4;
+            border-radius: 16px;
+            padding: 27px;
+            overflow: hidden;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 22px;
+        }
+
+        .table-header h2 {
+            color: #142B45;
+            font-size: 20px;
+        }
+
+        .table-header p {
+            color: #8491A2;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 720px;
+            text-align: right;
+        }
+
+        th {
+            background: #F3F6FA;
+            color: #627286;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 15px 13px;
+            white-space: nowrap;
+        }
+
+        th:first-child, td:first-child {
+            text-align: center;
+        }
+
+        td {
+            padding: 14px 13px;
+            border-bottom: 1px solid #EDF1F5;
+            font-size: 13px;
+            color: #42536A;
+        }
+
+        tbody tr:hover {
+            background: #F7FBFA;
+        }
+
+        .remaining {
+            color: #119D8D;
+            font-weight: 700;
+        }
+
+        /* ERROR */
+        .error-message {
+            display: none;
+            color: #C24141;
+            background: #FFF1F1;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 15px;
+        }
+
+        /* FOOTER */
+        footer {
+            text-align: center;
+            color: #A0ADBB;
+            font-size: 12px;
+            margin-top: 30px;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 750px) {
+            body {
+                padding: 22px 13px;
+            }
+
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .card, .table-card {
+                padding: 20px;
+            }
+
+            header h1 {
+                font-size: 21px;
+            }
+
+            .result-primary h2 {
+                font-size: 27px;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .result-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
+
 <body>
 
-    <h1>Loan Simulator</h1>
+<div class="container">
 
-    <h2>Loan Information</h2>
+    <!-- HEADER -->
+    <header>
+        <div class="logo">⌂</div>
+        <div>
+            <h1>Loan Simulator</h1>
+            <p>Smart financial planning made simple</p>
+        </div>
+    </header>
 
-    <form id="loanForm">
+    <!-- MAIN SECTION -->
+    <div class="main-grid">
 
-        <label for="amount">Loan Amount:</label>
-        <input type="number" id="amount" min="0.01" step="0.01"
-               placeholder="Enter loan amount" required>
+        <!-- LOAN FORM -->
+        <section class="card">
 
-        <br><br>
+            <div class="card-title">
+                <div class="card-icon">▤</div>
+                <h3>Loan Information</h3>
+            </div>
 
-        <label for="interestRate">Interest Rate (%):</label>
-        <input type="number" id="interestRate" min="0" step="0.01"
-               placeholder="Enter interest rate" required>
+            <form id="loanForm">
 
-        <br><br>
+                <div id="errorMessage" class="error-message"
+                     role="alert"></div>
 
-        <label for="rateType">Interest Rate Type:</label>
-        <select id="rateType" required>
-            <option value="monthly">Effective Monthly (E.M.)</option>
-            <option value="annual">Effective Annual (E.A.)</option>
-        </select>
+                <div class="form-group">
+                    <label for="amount">Loan Amount</label>
+                    <input type="number" id="amount"
+                           placeholder="e.g. 10000"
+                           min="0.01" step="0.01" required>
+                </div>
 
-        <br><br>
+                <div class="form-group">
+                    <label for="interestRate">Interest Rate (%)</label>
+                    <input type="number" id="interestRate"
+                           placeholder="e.g. 12"
+                           min="0" step="0.01" required>
+                </div>
 
-        <label for="months">Loan Term (Months):</label>
-        <input type="number" id="months" min="1" step="1"
-               placeholder="Enter number of months" required>
+                <div class="form-group">
+                    <label for="rateType">Interest Rate Type</label>
+                    <select id="rateType">
+                        <option value="monthly">
+                            Effective Monthly (E.M.)
+                        </option>
+                        <option value="annual">
+                            Effective Annual (E.A.)
+                        </option>
+                    </select>
+                </div>
 
-        <br><br>
+                <div class="form-group">
+                    <label for="months">Loan Term (Months)</label>
+                    <input type="number" id="months"
+                           placeholder="e.g. 12"
+                           min="1" step="1" required>
+                </div>
 
-        <button type="submit">Calculate Loan</button>
+                <button type="submit" class="calculate-btn">
+                    Calculate Loan →
+                </button>
 
-    </form>
+            </form>
 
-    <h2>Loan Results</h2>
+        </section>
 
-    <p id="monthlyRate"></p>
-    <p id="monthlyPayment"></p>
-    <p id="totalPayment"></p>
-    <p id="totalInterest"></p>
+        <!-- RESULTS -->
+        <section class="card">
 
-    <h2>Amortization Schedule</h2>
+            <div class="card-title">
+                <div class="card-icon">◈</div>
+                <h3>Loan Summary</h3>
+            </div>
 
-    <table border="1">
+            <div id="emptyResults" class="empty-results">
+                <span>▤</span>
+                <h3>No results yet</h3>
+                <p>Enter your loan information and calculate to see your financial summary.</p>
+            </div>
 
-        <thead>
-            <tr>
-                <th>Month</th>
-                <th>Initial Balance</th>
-                <th>Monthly Payment</th>
-                <th>Interest</th>
-                <th>Principal</th>
-                <th>Remaining Balance</th>
-            </tr>
-        </thead>
+            <div id="results" style="display:none;">
 
-        <tbody id="amortizationTable">
-        </tbody>
+                <div class="result-primary">
+                    <p>Estimated Monthly Payment</p>
+                    <h2 id="monthlyPayment">0.00</h2>
+                </div>
 
-    </table>
+                <div class="result-grid">
 
-    <script>
+                    <div class="result-box">
+                        <p>Total Loan Amount</p>
+                        <h3 id="loanAmount">0.00</h3>
+                    </div>
 
-        const loanForm = document.getElementById("loanForm");
+                    <div class="result-box">
+                        <p>Total Interest</p>
+                        <h3 id="totalInterest">0.00</h3>
+                        <small>Cost of borrowing</small>
+                    </div>
 
-        loanForm.addEventListener("submit", function(event) {
+                    <div class="result-box">
+                        <p>Total Payment</p>
+                        <h3 id="totalPayment">0.00</h3>
+                    </div>
 
-            event.preventDefault();
+                    <div class="result-box">
+                        <p>Monthly Effective Rate</p>
+                        <h3 id="monthlyRate">0.0000%</h3>
+                    </div>
 
-            // 1. Get user inputs
+                </div>
 
-            const amount = parseFloat(document.getElementById("amount").value);
+            </div>
 
-            const interestRate = parseFloat(
-                document.getElementById("interestRate").value
-            );
+        </section>
 
-            const rateType = document.getElementById("rateType").value;
+    </div>
 
-            const months = parseInt(
-                document.getElementById("months").value
-            );
+    <!-- AMORTIZATION TABLE -->
+    <section class="table-card">
 
-            // 2. Validate inputs
+        <div class="table-header">
+            <div>
+                <h2>Amortization Schedule</h2>
+                <p>Detailed breakdown of your monthly payments</p>
+            </div>
+        </div>
 
-            if (
-                !Number.isFinite(amount) ||
-                !Number.isFinite(interestRate) ||
-                !Number.isInteger(months) ||
-                amount <= 0 ||
-                interestRate < 0 ||
-                months <= 0
-            ) {
-                alert("Please enter valid loan information.");
-                return;
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Month</th>
+                        <th>Initial Balance</th>
+                        <th>Payment</th>
+                        <th>Interest</th>
+                        <th>Principal</th>
+                        <th>Remaining Balance</th>
+                    </tr>
+                </thead>
+
+                <tbody id="amortizationTable">
+
+                    <tr>
+                        <td colspan="6"
+                            style="text-align:center; padding:35px; color:#A0ADBB;">
+                            Your amortization schedule will appear here.
+                        </td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+    <footer>
+        Loan Simulator © 2026 | Financial Calculation Tool
+    </footer>
+
+</div>
+
+<script>
+
+    // CURRENCY FORMAT
+    const formatter = new Intl.NumberFormat("en-US", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+
+    // FORM ELEMENTS
+    const loanForm = document.getElementById("loanForm");
+
+    loanForm.addEventListener("submit", function(event) {
+
+        event.preventDefault();
+
+        // GET INPUTS
+        const amount = Number(document.getElementById("amount").value);
+
+        const interestRate = Number(
+            document.getElementById("interestRate").value
+        );
+
+        const rateType = document.getElementById("rateType").value;
+
+        const months = Number(document.getElementById("months").value);
+
+        const errorMessage = document.getElementById("errorMessage");
+
+        errorMessage.style.display = "none";
+
+        // VALIDATION
+        if (
+            !Number.isFinite(amount) ||
+            !Number.isFinite(interestRate) ||
+            !Number.isInteger(months) ||
+            amount <= 0 ||
+            interestRate < 0 ||
+            months <= 0
+        ) {
+            errorMessage.textContent =
+                "Please enter valid positive loan values and a valid interest rate.";
+
+            errorMessage.style.display = "block";
+            return;
+        }
+
+        // CONVERT INTEREST RATE
+        let monthlyRate;
+
+        if (rateType === "monthly") {
+
+            monthlyRate = interestRate / 100;
+
+        } else {
+
+            monthlyRate =
+                Math.pow(1 + interestRate / 100, 1 / 12) - 1;
+
+        }
+
+        // CALCULATE MONTHLY PAYMENT
+        let payment;
+
+        if (monthlyRate === 0) {
+
+            payment = amount / months;
+
+        } else {
+
+            payment =
+                amount * monthlyRate /
+                (1 - Math.pow(1 + monthlyRate, -months));
+
+        }
+
+        // AMORTIZATION VARIABLES
+        let balance = amount;
+        let totalInterest = 0;
+        let totalPaid = 0;
+
+        const table = document.getElementById("amortizationTable");
+
+        table.innerHTML = "";
+
+        // GENERATE TABLE
+        for (let month = 1; month <= months; month++) {
+
+            const initialBalance = balance;
+
+            const interest = initialBalance * monthlyRate;
+
+            let principal = payment - interest;
+            let actualPayment = payment;
+
+            // FINAL PAYMENT ADJUSTMENT
+            if (month === months) {
+
+                principal = initialBalance;
+                actualPayment = principal + interest;
+
             }
 
-            // 3. Convert interest rate into monthly effective rate
+            balance = Math.max(0, initialBalance - principal);
 
-            let monthlyInterestRate;
+            totalInterest += interest;
+            totalPaid += actualPayment;
 
-            if (rateType === "monthly") {
+            // CREATE ROW
+            const row = document.createElement("tr");
 
-                monthlyInterestRate = interestRate / 100;
+            const values = [
+                month,
+                formatter.format(initialBalance),
+                formatter.format(actualPayment),
+                formatter.format(interest),
+                formatter.format(principal),
+                formatter.format(balance)
+            ];
 
-            } else {
+            values.forEach((value, index) => {
 
-                monthlyInterestRate =
-                    Math.pow(1 + interestRate / 100, 1 / 12) - 1;
+                const cell = document.createElement("td");
 
-            }
+                cell.textContent = value;
 
-            // 4. Calculate monthly payment
-
-            let monthlyPayment;
-
-            if (monthlyInterestRate === 0) {
-
-                monthlyPayment = amount / months;
-
-            } else {
-
-                monthlyPayment =
-                    amount *
-                    monthlyInterestRate /
-                    (1 - Math.pow(
-                        1 + monthlyInterestRate,
-                        -months
-                    ));
-
-            }
-
-            // 5. Initialize amortization variables
-
-            let remainingBalance = amount;
-
-            let totalInterest = 0;
-            let totalPayment = 0;
-
-            const table = document.getElementById("amortizationTable");
-
-            table.innerHTML = "";
-
-            // 6. Generate amortization schedule
-
-            for (let month = 1; month <= months; month++) {
-
-                const initialBalance = remainingBalance;
-
-                const interest =
-                    initialBalance * monthlyInterestRate;
-
-                let payment = monthlyPayment;
-
-                let principal = payment - interest;
-
-                // Adjust final payment to eliminate rounding differences
-
-                if (month === months) {
-
-                    principal = initialBalance;
-                    payment = principal + interest;
-
+                if (index === 5) {
+                    cell.classList.add("remaining");
                 }
 
-                remainingBalance = Math.max(
-                    0,
-                    initialBalance - principal
-                );
+                row.appendChild(cell);
 
-                totalInterest += interest;
-                totalPayment += payment;
+            });
 
-                // 7. Create table row
+            table.appendChild(row);
 
-                const row = document.createElement("tr");
+        }
 
-                row.innerHTML = `
-                    <td>${month}</td>
-                    <td>${initialBalance.toFixed(2)}</td>
-                    <td>${payment.toFixed(2)}</td>
-                    <td>${interest.toFixed(2)}</td>
-                    <td>${principal.toFixed(2)}</td>
-                    <td>${remainingBalance.toFixed(2)}</td>
-                `;
+        // DISPLAY RESULTS
+        document.getElementById("emptyResults").style.display = "none";
 
-                table.appendChild(row);
+        document.getElementById("results").style.display = "block";
 
-            }
+        document.getElementById("monthlyPayment").textContent =
+            formatter.format(payment);
 
-            // 8. Display loan results
+        document.getElementById("loanAmount").textContent =
+            formatter.format(amount);
 
-            document.getElementById("monthlyRate").textContent =
-                "Monthly Effective Rate: " +
-                (monthlyInterestRate * 100).toFixed(4) + "%";
+        document.getElementById("totalInterest").textContent =
+            formatter.format(totalInterest);
 
-            document.getElementById("monthlyPayment").textContent =
-                "Monthly Payment: " + monthlyPayment.toFixed(2);
+        document.getElementById("totalPayment").textContent =
+            formatter.format(totalPaid);
 
-            document.getElementById("totalPayment").textContent =
-                "Total Payment: " + totalPayment.toFixed(2);
+        document.getElementById("monthlyRate").textContent =
+            (monthlyRate * 100).toFixed(4) + "%";
 
-            document.getElementById("totalInterest").textContent =
-                "Total Interest: " + totalInterest.toFixed(2);
+    });
 
-        });
-
-    </script>
+</script>
 
 </body>
 </html>
